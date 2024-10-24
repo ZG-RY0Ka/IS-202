@@ -1,0 +1,27 @@
+@model WebApplication1.Models.UserData
+@*
+    for more informasjon on enabling MVC, visit http://go.microsoft.com/fwlink/?LinkID=397860 
+*@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <h1>Thank you for registering yourself</h1>
+    <h1>Submitted Data</h1>
+</head>
+<body>
+<p><strong>Name:</strong>@Model.Name</p>
+<p><strong>Email:</strong>@Model.Email</p>
+<p><strong>Phone:</strong>@Model.Phone</p>
+<p><strong>Address:</strong>@Model.Address</p>
+
+<div>
+
+</div>
+</body>
+</html>

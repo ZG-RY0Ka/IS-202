@@ -1,0 +1,52 @@
+@model List<WebApplication1.Models.PositionsModel>
+
+<h2>Registered Correction</h2>
+
+<div>
+    @foreach (var position in Model)
+    {
+        <p><strong>Latitude:</strong>@position.Latitude</p>
+        <p><strong>Longitude:</strong>@position.Longitude</p>
+        <p><strong>Description:</strong>@position.Description</p>
+    }
+</div>
+<div id="map" style="height: 500px"></div>
+
+@section Scripts {
+<script>
+    // Initialize the map and set default view (centered at [0, 0], zoom level 2)
+    var map = L.map('map').setView([0, 0], 2);
+
+    // Set up the tile layer with proper attribution
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Get positions from the server-side model (ensure Model is an array of positions)
+    var positions = @Json.Serialize(Model);
+
+    // Loop over each position in the model
+    positions.forEach(function (position) {
+        // Add marker to the map at the given latitude and longitude
+        var marker = L.marker([position.latitude, position.longitude]).addTo(map);
+
+        // Prepare URL for reverse geocoding using Nominatim
+        var url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.latitude}&lon=${position.longitude}`;
+
+        // Fetch address data using the reverse geocoding API
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                // Check if the address is available, and display the popup with the description and address
+                var address = data.display_name ? data.display_name : "Address not found";
+                marker.bindPopup(`${position.description}<br>Address: ${address}`);
+            })
+            .catch(error => {
+                // Handle errors and bind a fallback message
+                marker.bindPopup(`${position.description}<br>Address: Not available`);
+            });
+    });
+</script>
+}
+
+}
